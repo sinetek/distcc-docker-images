@@ -1,20 +1,21 @@
-FROM fedora:42
+FROM gentoo/stage3:amd64-desktop-openrc
 
-LABEL maintainer="Konrad Kleine <kkleine@redhat.com>"
-LABEL author="Konrad Kleine <kkleine@redhat.com>"
-LABEL description="A distccd image based on Fedora 29 that I use for distributed compilation of LLDB"
+LABEL maintainer="Philippe Michaud-Boudreault <philmb3487@proton.me>"
+LABEL author="Philippe Michaud-Boudreault <philmb3487@proton.me>"
+LABEL description="A distccd image based on Gentoo that I use for emerge"
 ENV LANG=en_US.utf8
 
-RUN dnf install -y \
-    clang \
-    distcc \
-    distcc-server \
-    gcc \
-    htop \
-   && yum clean all
+RUN emerge-webrsync
+COPY gentoobinhost.conf /etc/portage/binrepos.conf/gentoobinhost.conf
+RUN getuto
+RUN emerge -g \
+   sys-devel/clang \
+   sys-devel/distcc \
+   sys-devel/gcc \
+   sys-process/htop
 
 ENV HOME=/home/distcc
-RUN useradd -s /bin/bash distcc
+#RUN useradd -s /bin/bash distcc
 
 # Define how to start distccd by default
 # (see "man distccd" for more information)
